@@ -13,6 +13,7 @@ import {
     Table
 } from 'react-bootstrap';
 import UserInfo from "./components/UserInfo";
+import Timer from "./components/Timer";
 import axios from 'axios';
 
 
@@ -33,11 +34,14 @@ export default class App extends Component {
         }
     }
 
+    userRef = null;
+
     render() {
         return (
             <div style={{padding: 20}}>
                 <div>
                     <Button className="pull-right" onClick={this.__onNewClick}>Yeni Ekle </Button>
+                    <Timer timeUp={this.__timeUpApp} className= "pull-left"/>
                 </div>
                 <Table striped bordered condensed hover>
                     <thead>
@@ -49,13 +53,20 @@ export default class App extends Component {
                     </tr>
                     </thead>
                     <tbody>
-                    <UserInfo onUpdate={this.__onUpdateClick} onDelete={this.__onDeleteClick} users={this.state.users}/>
+                    <UserInfo ref={(x) => {
+                        this.userRef = x
+                    }}
+                              onUpdate={this.__onUpdateClick} onDelete={this.__onDeleteClick} users={this.state.users}/>
                     </tbody>
                 </Table>
                 {this.__renderModal()}
             </div>
         );
     }
+
+    __timeUpApp=()=>{
+      console.log("süre doldu")
+    };
 
     __onDeleteClick = (event, id) => {
         axios.delete(PATH + "users/" + id).then(() => {

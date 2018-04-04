@@ -3,6 +3,14 @@ import {Button} from "react-bootstrap";
 
 export default class UserInfo extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            parametre: "stateParametre",
+            parametre1: "stateParametre1",
+            parametre2: "stateParametre2"
+        }
+    }
 
     render() {
         return (this.__renderUsersInfo());
