@@ -25,6 +25,7 @@ export default class App extends Component {
         this.state = {
             users: [],
             showModal: false,
+            buttonDisabled: false,
             confirmButtonText: "Add",
             operationType: "create",
             selectedUser: {
@@ -34,14 +35,15 @@ export default class App extends Component {
         }
     }
 
-    userRef = null;
+    userInfoRef = null;
 
     render() {
         return (
             <div style={{padding: 20}}>
                 <div>
-                    <Button className="pull-right" onClick={this.__onNewClick}>Yeni Ekle </Button>
-                    <Timer timeUp={this.__timeUpApp} className= "pull-left"/>
+                    <Timer timeUp={this.__timeUpApp} className="pull-left"/>
+                    <Button className="pull-right" onClick={this.__onNewClick}
+                            disabled={this.state.buttonDisabled}> Yeni Ekle </Button>
                 </div>
                 <Table striped bordered condensed hover>
                     <thead>
@@ -53,10 +55,13 @@ export default class App extends Component {
                     </tr>
                     </thead>
                     <tbody>
-                    <UserInfo ref={(x) => {
-                        this.userRef = x
-                    }}
-                              onUpdate={this.__onUpdateClick} onDelete={this.__onDeleteClick} users={this.state.users}/>
+                    <UserInfo
+                        ref={(ref) => {
+                            this.userInfoRef = ref
+                        }}
+                        onUpdate={this.__onUpdateClick}
+                        onDelete={this.__onDeleteClick}
+                        users={this.state.users}/>
                     </tbody>
                 </Table>
                 {this.__renderModal()}
@@ -64,8 +69,12 @@ export default class App extends Component {
         );
     }
 
-    __timeUpApp=()=>{
-      console.log("süre doldu")
+    __timeUpApp = () => {
+        this.userInfoRef.doButtonDisabled();
+        //this.userInfoRef.setState({}); diğer yöntem
+        this.setState(() => {
+            return ({buttonDisabled: true});
+        });
     };
 
     __onDeleteClick = (event, id) => {

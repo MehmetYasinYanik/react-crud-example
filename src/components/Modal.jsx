@@ -13,14 +13,12 @@ import {
 } from 'react-bootstrap';
 
 export default class Modal extends Component {
-
-
     render() {
         return (
             <div className="static-modal">
                 <Modal show={this.props.showModal}>
                     <ModalHeader>
-                        <Modal.Title>{this.state.confirmButtonText} User</Modal.Title>
+                        <Modal.Title>{this.props.confirmButtonText} User</Modal.Title>
                     </ModalHeader>
 
                     <ModalBody>

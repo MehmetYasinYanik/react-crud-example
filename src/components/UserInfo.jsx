@@ -6,15 +6,19 @@ export default class UserInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            parametre: "stateParametre",
-            parametre1: "stateParametre1",
-            parametre2: "stateParametre2"
+            buttonDisabled: false
         }
     }
 
     render() {
         return (this.__renderUsersInfo());
     }
+
+    doButtonDisabled = () => {
+        this.setState(() => {
+            return ({buttonDisabled: true});
+        });
+    };
 
     __renderUsersInfo = () => {
         let arr = [];
@@ -26,8 +30,12 @@ export default class UserInfo extends Component {
                     <td>{user.username}</td>
                     <td>{user.age}</td>
                     <td>
-                        <Button id={user.id} onClick={this.__onClickUpdate.bind(this, user.id)}>Düzenle</Button>
-                        <Button id={user.id} onClick={this.__onClickDelete.bind(this, user.id)}
+                        <Button disabled={this.state.buttonDisabled}
+                                id={user.id}
+                                onClick={this.__onClickUpdate.bind(this, user.id)}>Düzenle</Button>
+                        <Button disabled={this.state.buttonDisabled}
+                                id={user.id}
+                                onClick={this.__onClickDelete.bind(this, user.id)}
                                 style={{marginLeft: 10}}>Sil</Button>
                     </td>
                 </tr>
@@ -37,10 +45,10 @@ export default class UserInfo extends Component {
     };
 
     __onClickDelete = (id, e) => {
-        this.props.onDelete(e, id)
+        this.props.onDelete(e, id);
     };
 
     __onClickUpdate = (id, e) => {
         this.props.onUpdate(e, id);
-    }
+    };
 }
