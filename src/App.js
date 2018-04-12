@@ -22,12 +22,13 @@ export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            operationInfo: [],
             users: [],
             showModal: false,
             imageDisabled: true,
             confirmButtonText: "Add",
             operationType: "create",
-            buttonDisabled:false,
+            buttonDisabled: false,
             selectedUser: {
                 username: "",
                 age: ""
@@ -75,17 +76,53 @@ export default class App extends Component {
                     users={this.state.users}/>
                 </tbody>
             </Table>
+            <ol>
+                {this.__renderLogs()}
+            </ol>
             {this.__renderModal()}
         </div>;
     }
 
+    __renderLogs = () => {
+        let arr = [];
+        if (this.state.operationInfo.length > 0) {
+            this.state.operationInfo.map((i) => {
+                arr.push(
+                    <li key={i}>
+                        {i}
+                    </li>
+                );
+            });
+        }
+        return arr;
+    };
+
     __onDeleteClick = (event, id) => {
         axios.delete(PATH + "users/" + id).then(() => {
+            let data = {};
+            this.state.users.map((i) => {
+                if (i.id === id) {
+                    data = i;
+                }
+                //  i.id === id ? data = i : null;
+            });
+
             this.__getAllUsers();
             //close modal a gerek yok
             this.__closeModal();
-
+            this.__setOperationInfo("DELETE", data);
         });
+    };
+
+    __setOperationInfo = (logType, data) => {
+        let text = data.username + " --- " + logType + " işlemi " + new Date() + " zamanında uygulandı.";
+        //let text2 = `${data} --- ${logType} işlemi ${logTime} zamanında uygulandı.`;
+        let infos = this.state.operationInfo;
+        infos.push(text);
+        this.setState((state, props) => {
+            return ({operationInfo: infos});
+        });
+
     };
 
     __onUpdateClick = (event, id) => {
@@ -156,15 +193,19 @@ export default class App extends Component {
             axios.post(PATH + "users", this.state.selectedUser).then(() => {
                 this.__getAllUsers();
                 this.__closeModal();
+                this.__setOperationInfo("CREATE", this.state.selectedUser);
                 this.__clearSelectedUser();
             })
         } else {
             axios.put(PATH + "users/" + this.state.selectedUser.id, this.state.selectedUser).then(() => {
                 this.__getAllUsers();
                 this.__closeModal();
+                this.__setOperationInfo("UPDATE", this.state.selectedUser);
                 this.__clearSelectedUser();
             })
         }
+
+
     };
 
     __clearSelectedUser = () => {
@@ -180,7 +221,7 @@ export default class App extends Component {
     };
 
     __openModal = () => {
-        this.setState((props, state) => {
+        this.setState((state, props) => {
             return ({showModal: true});
         });
     };
@@ -205,13 +246,13 @@ export default class App extends Component {
 
     __onClickImage = () => {
         this.userInfoRef.setState({buttonDisabled: false});
-        this.setState({imageDisabled: true,buttonDisabled:false});
-        this.timerRef.setState({time:5});
+        this.setState({imageDisabled: true, buttonDisabled: false});
+        this.timerRef.setState({time: 5});
 
         // bu metodun içinde en son bu çalışsın
-        setTimeout(()=>{
+        setTimeout(() => {
             this.timerRef.startTimer();
-        },0);
+        }, 0);
 
     };
 

@@ -5,7 +5,7 @@ export default class Timer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            time: 5
+            time: 500
         }
     }
 
