@@ -9,17 +9,9 @@ export default class UserInfo extends Component {
             buttonDisabled: false
         }
     }
-
     render() {
         return (this.__renderUsersInfo());
     }
-
-    doButtonDisabled = () => {
-        this.setState(() => {
-            return ({buttonDisabled: true});
-        });
-    };
-
     __renderUsersInfo = () => {
         let arr = [];
         let users = this.props.users;
@@ -43,6 +35,15 @@ export default class UserInfo extends Component {
         });
         return arr;
     };
+
+    doButtonDisabled = () => {
+        this.setState(() => {
+            //böyle niye olamazdı???
+            //this.setState({buttonDisabled:true})
+            return ({buttonDisabled: true});
+        });
+    };
+
 
     __onClickDelete = (id, e) => {
         this.props.onDelete(e, id);

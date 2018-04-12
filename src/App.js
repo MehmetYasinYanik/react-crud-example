@@ -16,7 +16,6 @@ import UserInfo from "./components/UserInfo";
 import Timer from "./components/Timer";
 import axios from 'axios';
 
-
 const PATH = "http://localhost:3000/";
 export default class App extends Component {
 
@@ -25,9 +24,10 @@ export default class App extends Component {
         this.state = {
             users: [],
             showModal: false,
-            buttonDisabled: false,
+            imageDisabled: true,
             confirmButtonText: "Add",
             operationType: "create",
+            buttonDisabled:false,
             selectedUser: {
                 username: "",
                 age: ""
@@ -36,51 +36,55 @@ export default class App extends Component {
     }
 
     userInfoRef = null;
+    timerRef = null;
 
     render() {
-        return (
-            <div style={{padding: 20}}>
-                <div>
-                    <Timer timeUp={this.__timeUpApp} className="pull-left"/>
-                    <Button className="pull-right" onClick={this.__onNewClick}
-                            disabled={this.state.buttonDisabled}> Yeni Ekle </Button>
-                </div>
-                <Table striped bordered condensed hover>
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Username</th>
-                        <th>Age</th>
-                        <th>Commands</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <UserInfo
-                        ref={(ref) => {
-                            this.userInfoRef = ref
-                        }}
-                        onUpdate={this.__onUpdateClick}
-                        onDelete={this.__onDeleteClick}
-                        users={this.state.users}/>
-                    </tbody>
-                </Table>
-                {this.__renderModal()}
-            </div>
-        );
-    }
+        return <div style={{padding: 20}}>
+            <div>
+                <span hidden={this.state.imageDisabled}
+                      onClick={this.__onClickImage}>
+                    <i className="fas fa-hourglass-half"
+                       style={{fontSize: 50, color: "blue"}}/>
+                </span>
 
-    __timeUpApp = () => {
-        this.userInfoRef.doButtonDisabled();
-        //this.userInfoRef.setState({}); diğer yöntem
-        this.setState(() => {
-            return ({buttonDisabled: true});
-        });
-    };
+                <Timer timeUp={this.__timeUpApp}
+                       className="pull-left"
+                       ref={(ref) => {
+                           this.timerRef = ref
+                       }}
+                />
+                <Button className="pull-right" onClick={this.__onNewClick}
+                        disabled={this.state.buttonDisabled}> Yeni Ekle </Button>
+            </div>
+            <Table striped bordered condensed hover>
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Username</th>
+                    <th>Age</th>
+                    <th>Commands</th>
+                </tr>
+                </thead>
+                <tbody>
+                <UserInfo
+                    ref={(ref) => {
+                        this.userInfoRef = ref
+                    }}
+                    onUpdate={this.__onUpdateClick}
+                    onDelete={this.__onDeleteClick}
+                    users={this.state.users}/>
+                </tbody>
+            </Table>
+            {this.__renderModal()}
+        </div>;
+    }
 
     __onDeleteClick = (event, id) => {
         axios.delete(PATH + "users/" + id).then(() => {
             this.__getAllUsers();
+            //close modal a gerek yok
             this.__closeModal();
+
         });
     };
 
@@ -138,7 +142,6 @@ export default class App extends Component {
                             </FormGroup>
                         </Form>
                     </ModalBody>
-
                     <ModalFooter>
                         <Button onClick={this.__closeModal}>Cancel</Button>
                         <Button onClick={this.__onSubmit} bsStyle="primary">{this.state.confirmButtonText}</Button>
@@ -199,4 +202,25 @@ export default class App extends Component {
     componentDidMount() {
         this.__getAllUsers();
     }
+
+    __onClickImage = () => {
+        this.userInfoRef.setState({buttonDisabled: false});
+        this.setState({imageDisabled: true,buttonDisabled:false});
+        this.timerRef.setState({time:5});
+
+        // bu metodun içinde en son bu çalışsın
+        setTimeout(()=>{
+            this.timerRef.startTimer();
+        },0);
+
+    };
+
+    __timeUpApp = () => {
+        this.userInfoRef.doButtonDisabled();
+        // this.setState({buttonDisabled: true, imageDisabled: false});
+        this.setState(() => {
+            return ({buttonDisabled: true, imageDisabled: false});
+        });
+    };
+
 }
